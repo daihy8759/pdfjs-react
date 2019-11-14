@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import { PDFJS as PDFJSViewer } from 'pdfjs-dist/web/pdf_viewer.js';
-import './Viewer.css';
-import 'pdfjs-dist/web/pdf_viewer.css';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import PropTypes from "prop-types";
+import * as PDFJSViewer from "pdfjs-dist/web/pdf_viewer";
+import "./Viewer.css";
+import "pdfjs-dist/web/pdf_viewer.css";
 
 class Viewer extends Component {
   constructor(props) {
@@ -11,12 +11,13 @@ class Viewer extends Component {
     this.initEventBus();
     this.state = {
       doc: null,
-      scale: undefined,
+      scale: undefined
     };
   }
   initEventBus() {
+    console.log(PDFJSViewer);
     let eventBus = new PDFJSViewer.EventBus();
-    eventBus.on('pagesinit', (e) => {
+    eventBus.on("pagesinit", e => {
       this.setState({
         scale: this._pdfViewer.currentScale
       });
@@ -24,12 +25,12 @@ class Viewer extends Component {
         this.props.onInit({});
       }
       if (this.props.onScaleChanged) {
-        this.props.onScaleChanged({scale: this.state.scale});
+        this.props.onScaleChanged({ scale: this.state.scale });
       }
     });
-    eventBus.on('scalechange', (e) => {
+    eventBus.on("scalechange", e => {
       if (this.props.onScaleChanged) {
-        this.props.onScaleChanged({scale: e.scale});
+        this.props.onScaleChanged({ scale: e.scale });
       }
     });
     this._eventBus = eventBus;
@@ -38,7 +39,7 @@ class Viewer extends Component {
     let viewerContainer = ReactDOM.findDOMNode(this);
     this._pdfViewer = new PDFJSViewer.PDFViewer({
       container: viewerContainer,
-      eventBus: this._eventBus,
+      eventBus: this._eventBus
     });
   }
   componentWillUpdate(nextProps, nextState) {
@@ -50,22 +51,26 @@ class Viewer extends Component {
     }
   }
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.state.doc !== nextState.doc ||
-        this.state.scale !== nextState.scale) {
+    if (
+      this.state.doc !== nextState.doc ||
+      this.state.scale !== nextState.scale
+    ) {
       return true;
     }
     return false;
   }
   render() {
-    return (<div className="Viewer">
-      <div className="pdfViewer"></div>
-    </div>);
+    return (
+      <div className="Viewer">
+        <div className="pdfViewer"></div>
+      </div>
+    );
   }
 }
 
 Viewer.propTypes = {
   onInit: PropTypes.func,
-  onScaleChanged: PropTypes.func,
+  onScaleChanged: PropTypes.func
 };
 
 export default Viewer;
